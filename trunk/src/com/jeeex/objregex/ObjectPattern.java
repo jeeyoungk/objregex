@@ -14,7 +14,7 @@ import com.google.common.base.Predicate;
  * @param <T>
  * @see #match(List), #set
  */
-public interface ObjectPattern<T> {
+public interface ObjectPattern<T> extends Predicate<List<? extends T>> {
 	/**
 	 * Determines whether the given list matches against the underlying regular
 	 * expression.
@@ -26,7 +26,7 @@ public interface ObjectPattern<T> {
 	 * @throws NullPointerException
 	 *             if the input is {@code null}.
 	 */
-	public boolean match(List<T> input) throws NullPointerException;
+	public boolean match(List<? extends T> input) throws NullPointerException;
 
 	/**
 	 * Pairs up the given identifier and predicate in this pattern.
@@ -35,6 +35,15 @@ public interface ObjectPattern<T> {
 	 *             If any of the arguments are null.
 	 */
 	public void set(String identifier, Predicate<T> predicate)
+			throws NullPointerException;
+
+	/**
+	 * Pairs up the given identifier and given pattern in this pattern.
+	 * 
+	 * @throws NullPointerException
+	 *             If any of the arguments are null.
+	 */
+	public void set(String identifier, ObjectPattern<T> pattern)
 			throws NullPointerException;
 
 	/**
