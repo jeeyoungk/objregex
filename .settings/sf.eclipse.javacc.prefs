@@ -1,0 +1,9 @@
+#Fri Feb 05 22:01:08 PST 2010
+CLEAR_CONSOLE=false
+JJ_NATURE=true
+JTB_OPTIONS=-p\=com.jeeex.objregex.impl
+RUNTIME_JJJAR=/Users/jeekim/Downloads/eclipse/plugins/sf.eclipse.javacc_1.5.17/javacc.jar
+RUNTIME_JTBJAR=/Users/jeekim/Downloads/eclipse/plugins/sf.eclipse.javacc_1.5.17/jtb-1.4.0.jar
+SHOW_CONSOLE=true
+SUPPRESS_WARNINGS=true
+eclipse.preferences.version=1
