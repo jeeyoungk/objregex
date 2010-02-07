@@ -57,13 +57,18 @@ public class RegexTest {
 
 	@Test
 	public void testGrammar_Comprehensive() {
-		testGood("", "FOO", "BAR", "FOO BAR", "FOO BAR BAZ", "FOO+ BAR? BAZ*",
-				"_FOO_BAR_BAZ*", "A|B|C|D", "(A|B|C)*", "((A B C )+ (A|B|C)*)?");
+		testGood("FOO", "BAR", "FOO BAR", "FOO BAR BAZ", "FOO+ BAR? BAZ*",
+				"_FOO_BAR_BAZ*", "A|B|C|D", "(A|B|C)*", "((A B C )+ (A|B|C)*)?", "A B C|");
 	}
 
 	@Test
-	public void testGrammar_Bad() {
-		testBad("(", ")", "*");
+	public void testGrammar_Empty() {
+		testGood("", "()", "()()", "(())");
+	}
+
+	@Test
+	public void testGrammar_Bad() throws Exception {
+		testBad("(", ")", "*", "+", "?", "(()", "())");
 	}
 
 	@Test
