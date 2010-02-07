@@ -7,6 +7,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
@@ -42,6 +43,39 @@ public class RegexTest {
 		return bad;
 	}
 
+	public void testDump(String input) {
+		SimpleNode node = null;
+		try {
+			node = new RegexParser(new StringReader(input)).Start();
+		} catch (ParseException e) {
+			Assert.fail();
+		}
+		dump(node, " ");
+	}
+
+	public void dump(SimpleNode node, String prefix) {
+		Token token = node.firstToken;
+		List<Token> tokens = Lists.newArrayList();
+		while (token != null) {
+			tokens.add(token);
+			if (token == node.lastToken)
+				break;
+			token = token.next;
+		}
+		String tokenStr = "{" + Joiner.on(" ").join(tokens) + "}";
+
+		System.out.println(node.toString(prefix) + tokenStr);
+
+		if (node.children != null) {
+			for (int i = 0; i < node.children.length; ++i) {
+				SimpleNode n = (SimpleNode) node.children[i];
+				if (n != null) {
+					dump(n, prefix + " ");
+				}
+			}
+		}
+	}
+
 	public void testGood(String... input) {
 		List<String> bad = test(true, input);
 		Assert.assertEquals("The following patterns are supposed to be valid.",
@@ -56,23 +90,38 @@ public class RegexTest {
 	}
 
 	@Test
-	public void testGrammar_Comprehensive() {
-		testGood("FOO", "BAR", "FOO BAR", "FOO BAR BAZ", "FOO+ BAR? BAZ*",
-				"_FOO_BAR_BAZ*", "A|B|C|D", "(A|B|C)*", "((A B C )+ (A|B|C)*)?", "A B C|");
+	public void grammar_Basic() {
+		testGood("A", "A B", "A B C", "A B C D");
+
+		testGood("(A)", "((A))", "(A)(B)", "((A)(B))");
+
+		testGood("$", "^", ".", "^.*$");
 	}
 
 	@Test
-	public void testGrammar_Empty() {
+	public void grammar_Empty() {
 		testGood("", "()", "()()", "(())");
 	}
 
 	@Test
-	public void testGrammar_Bad() throws Exception {
+	public void grammar_Bad() throws Exception {
 		testBad("(", ")", "*", "+", "?", "(()", "())");
+
+		testBad("|*", "*|", "|*|");
 	}
 
 	@Test
-	public void testGrammar_Or() {
+	public void grammar_Or() {
 		testGood("A|B", "A|", "|A", "A||A", "|||");
+	}
+
+	@Test
+	public void grammar_Operator() {
+		testGood("A+", "A?", "A*", "AB++", "A+?", "A**", "(A)*", "(A+)*");
+	}
+
+	@Test
+	public void grammar_Compound() {
+		testGood("A+ B? C*", "((A B+ C)*(D? E F)+)?", "(A?|B?|C?|D?)");
 	}
 }
