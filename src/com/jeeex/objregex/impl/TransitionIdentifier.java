@@ -16,9 +16,15 @@ import com.google.common.base.Objects;
  * 
  */
 public class TransitionIdentifier {
+	/**
+	 * Represents a transition that does not consume any input.
+	 */
 	public static final TransitionIdentifier EPSILON = new TransitionIdentifier(
 			true, "EPSILON");
 
+	/**
+	 * Initializes a non-special special id, with given string identifier.
+	 */
 	public static TransitionIdentifier make(String id) {
 		return new TransitionIdentifier(false, id);
 	}
