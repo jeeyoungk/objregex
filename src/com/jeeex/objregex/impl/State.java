@@ -19,5 +19,15 @@ public interface State {
 
 	public Multimap<TransitionIdentifier, State> getTransitions();
 
+	/**
+	 * Add a transition from the head of this state to the tail of the other
+	 * state. (This implies {@code a.addTransition(id, b)} is equivalent to
+	 * {@code a.getHead().addTransition(id, b.getTail())}.
+	 * 
+	 * @param id
+	 *            The identifier for the newly created transition.
+	 * @param The
+	 *            target of the state transition.
+	 */
 	public void addTransition(TransitionIdentifier id, State other);
 }
