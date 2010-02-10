@@ -53,6 +53,14 @@ public class RegexTest {
 		dump(node, " ");
 	}
 
+	/**
+	 * Method used to dump the node (and all tokens in it) to the standard out.
+	 * 
+	 * @param node
+	 *            Node to be dumped
+	 * @param prefix
+	 *            pass in " ".
+	 */
 	public void dump(SimpleNode node, String prefix) {
 		Token token = node.firstToken;
 		List<Token> tokens = Lists.newArrayList();
