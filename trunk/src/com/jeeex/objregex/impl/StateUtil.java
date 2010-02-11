@@ -21,11 +21,17 @@ import com.google.common.collect.Sets;
  */
 public class StateUtil {
 
+	private StateUtil() {
+		// prevent initialization.
+	}
+
 	/**
+	 * Returns the NFA for the regular expression "A B"
 	 * 
 	 * @param first
+	 *            NFA state for regex A.
 	 * @param second
-	 * @return
+	 *            NFA state for regex B.
 	 */
 	public static State concat(State first, State second) {
 		State newState = new CompositeState(first, second);
@@ -34,13 +40,27 @@ public class StateUtil {
 		return newState;
 	}
 
-	public static State kleineClosure(State state, TransitionIdentifier id) {
+	/**
+	 * Returns the NFA for the regular expression "A*"
+	 * 
+	 * @param state
+	 *            NFA state for regex A.
+	 */
+	public static State kleineClosure(State state) {
 		State newState = new LeafState();
 		newState.addTransition(TransitionIdentifier.EPSILON, state);
 		state.addTransition(TransitionIdentifier.EPSILON, newState);
 		return newState;
 	}
 
+	/**
+	 * Returns the NFA for the regular expression "A | B"
+	 * 
+	 * @param first
+	 *            NFA state for regex A.
+	 * @param second
+	 *            NFA state for regex B.
+	 */
 	public static State or(State first, State second) {
 		State tail = new LeafState();
 		State head = new LeafState();
@@ -54,8 +74,12 @@ public class StateUtil {
 	}
 
 	/**
-	 * Creates a State containing exactly two states, head and tail, and one
-	 * transition from the head to tail.
+	 * Returns the NFA for regular expression "a", where {@code a} is a single
+	 * character.
+	 * <p>
+	 * Internally, it creates a {@link State} containing exactly two
+	 * {@link State}s, {@code head} and {@code tail}, and one transition from
+	 * the head to tail.
 	 * 
 	 * @param id
 	 *            The Transition identifier between the two states.
@@ -113,6 +137,12 @@ public class StateUtil {
 			tempSet.addAll(state.getTransitions().get(identifier));
 		}
 		return tempSet;
+	}
 
+	/**
+	 * Generate a {@link State} for empty string.
+	 */
+	public static State emptyState() {
+		return StateUtil.single(TransitionIdentifier.EPSILON);
 	}
 }
