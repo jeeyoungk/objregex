@@ -56,6 +56,13 @@ public class StateUtilTest {
 	}
 
 	@Test
+	public void testTraverse_Empty() {
+		fromSet = ImmutableSet.of(stateB);
+		toSet = StateUtil.traverse(fromSet, makeTid("DOES_NOT_EXIST"));
+		assertEquals(ImmutableSet.of(), toSet);
+	}
+
+	@Test
 	public void testTraverse_Multi() {
 		fromSet = ImmutableSet.of(stateB);
 		toSet = StateUtil.traverse(fromSet, makeTid("TEST"));
