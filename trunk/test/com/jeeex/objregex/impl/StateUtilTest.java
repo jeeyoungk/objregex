@@ -36,6 +36,8 @@ public class StateUtilTest {
 
 		stateC.addTransition(makeTid("FOO"), stateD);
 
+		stateA.addTransition(TransitionIdentifier.EPSILON, stateB);
+		stateB.addTransition(TransitionIdentifier.EPSILON, stateC);
 	}
 
 	@Test
@@ -72,5 +74,12 @@ public class StateUtilTest {
 		fromSet = ImmutableSet.of(stateA);
 		toSet = StateUtil.traverse(fromSet, makeTid("FOO"));
 		assertEquals(ImmutableSet.of(stateB), toSet);
+	}
+
+	@Test
+	public void testTransitiveClosure() {
+		fromSet = ImmutableSet.of(stateA);
+		toSet = StateUtil.transitiveClosure(fromSet);
+		assertEquals(ImmutableSet.of(stateA, stateB, stateC), toSet);
 	}
 }
