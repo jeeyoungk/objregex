@@ -113,7 +113,7 @@ public class StateUtil {
 			oldSize = closure.size();
 			closure.addAll(traverse(closure, TransitionIdentifier.EPSILON));
 			newSize = closure.size();
-		} while (oldSize == newSize);
+		} while (oldSize != newSize);
 
 		return closure;
 	}
