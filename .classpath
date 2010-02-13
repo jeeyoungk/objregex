@@ -8,6 +8,6 @@
 			<attribute name="javadoc_location" value="http://google-collections.googlecode.com/svn/trunk/javadoc/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/junit-4.8.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
