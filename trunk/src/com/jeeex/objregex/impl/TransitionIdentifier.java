@@ -1,16 +1,20 @@
 package com.jeeex.objregex.impl;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Objects;
 
 /**
  * An immutable datatype to identify the transition between the states.
  * <p>
  * {@link TransitionIdentifier} is either {@link #isSpecial() special} or not .
- * Special TransitionIdentifiers are predefined, and they're visible as static
- * members in this class. Currently, {@link #EPSILON} is the only special
- * identifier. Users should use the method {@link #make(String)} to create
- * {@link TransitionIdentifier}. {@link #make(String)} method returns nonspecial
- * identifier.
+ * Special TransitionIdentifiers are predefined, and they're available as the
+ * static constants in this class. Currently, {@link #EPSILON} is the only
+ * special identifier. Users should use the method {@link #makeTid(String)} to
+ * create {@link TransitionIdentifier}. {@link #makeTid(String)} method returns
+ * nonspecial identifier.
+ * <p>
+ * {@link TransitionIdentifier} is immutable.
  * 
  * @author jeekim
  * 
@@ -24,8 +28,12 @@ public class TransitionIdentifier {
 
 	/**
 	 * Initializes a non-special special id, with given string identifier.
+	 * 
+	 * @throws NullPointerException
+	 *             If id is null.
 	 */
-	public static TransitionIdentifier make(String id) {
+	public static TransitionIdentifier makeTid(String id)
+			throws NullPointerException {
 		return new TransitionIdentifier(false, id);
 	}
 
@@ -33,7 +41,9 @@ public class TransitionIdentifier {
 
 	private final String id;
 
-	private TransitionIdentifier(boolean special, String id) {
+	private TransitionIdentifier(boolean special, String id)
+			throws NullPointerException {
+		checkNotNull(id);
 		this.special = special;
 		this.id = id;
 	}
