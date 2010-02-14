@@ -1,8 +1,12 @@
 package com.jeeex.objregex.impl;
 
+import static com.jeeex.objregex.impl.TransitionIdentifier.EPSILON;
+
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * Utility methods needed to translate regular expression into NFA. Each atomic
@@ -34,8 +38,8 @@ public class StateUtil {
 	 *            NFA state for regex B.
 	 */
 	public static State concat(State first, State second) {
-		State newState = new CompositeState(first, second);
-		first.addTransition(TransitionIdentifier.EPSILON, second);
+		State newState = new CompositeState(second, first);
+		first.addTransition(EPSILON, second);
 
 		return newState;
 	}
@@ -48,13 +52,16 @@ public class StateUtil {
 	 */
 	public static State kleineClosure(State state) {
 		State newState = new LeafState();
-		newState.addTransition(TransitionIdentifier.EPSILON, state);
-		state.addTransition(TransitionIdentifier.EPSILON, newState);
+		newState.addTransition(EPSILON, state);
+		state.addTransition(EPSILON, newState);
 		return newState;
 	}
 
 	/**
-	 * Returns the NFA for the regular expression "A | B"
+	 * Returns the NFA for the regular expression "A | B".
+	 * <p>
+	 * Namely, it is set of states A, B, HEAD, TAIL, with epsilon-transitions
+	 * from TAIL to A and B, from A and B to HEAD.
 	 * 
 	 * @param first
 	 *            NFA state for regex A.
@@ -65,10 +72,10 @@ public class StateUtil {
 		State tail = new LeafState();
 		State head = new LeafState();
 
-		tail.addTransition(TransitionIdentifier.EPSILON, second);
-		tail.addTransition(TransitionIdentifier.EPSILON, second);
-		second.addTransition(TransitionIdentifier.EPSILON, head);
-		second.addTransition(TransitionIdentifier.EPSILON, head);
+		tail.addTransition(EPSILON, first);
+		tail.addTransition(EPSILON, second);
+		first.addTransition(EPSILON, head);
+		second.addTransition(EPSILON, head);
 
 		return new CompositeState(head, tail);
 	}
@@ -111,7 +118,7 @@ public class StateUtil {
 		// for the iteration, then we've hit the limit - terminate.
 		do {
 			oldSize = closure.size();
-			closure.addAll(traverse(closure, TransitionIdentifier.EPSILON));
+			closure.addAll(traverse(closure, EPSILON));
 			newSize = closure.size();
 		} while (oldSize != newSize);
 
@@ -143,6 +150,15 @@ public class StateUtil {
 	 * Generate a {@link State} for empty string.
 	 */
 	public static State emptyState() {
-		return StateUtil.single(TransitionIdentifier.EPSILON);
+		return StateUtil.single(EPSILON);
+	}
+
+	public static Set<TransitionIdentifier> getOutgoingTransitions(
+			Set<State> states) {
+		Builder<TransitionIdentifier> builder = ImmutableSet.builder();
+		for (State state : states) {
+			builder.addAll(state.getTransitions().keySet());
+		}
+		return builder.build();
 	}
 }
