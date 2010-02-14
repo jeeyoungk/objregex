@@ -6,7 +6,7 @@ import com.google.common.collect.Multimap;
 
 /**
  * Represents a group of NFA states bound together. A {@link CompositeState}
- * contains ³ 1 states. There are at least 2 groups of {@link State}s.
+ * contains â‰¥ 1 states. There are at least 2 groups of {@link State}s.
  * {@link #head} and {@link #tail}. The CompositeState is trivial if head =
  * tail. All the methods defined in the interface {@link State} are delegated to
  * either {@link #head} or {@link #tail}.
