@@ -29,15 +29,15 @@ public class StateUtilTest {
 		stateD = new LeafState();
 
 		stateA.addTransition(makeTid("FOO"), stateB);
+		stateA.addTransition(TransitionIdentifier.EPSILON, stateB);
 		stateA.addTransition(makeTid("BAR"), stateC);
 
 		stateB.addTransition(makeTid("TEST"), stateC);
+		stateB.addTransition(TransitionIdentifier.EPSILON, stateC);
 		stateB.addTransition(makeTid("TEST"), stateD);
 
 		stateC.addTransition(makeTid("FOO"), stateD);
 
-		stateA.addTransition(TransitionIdentifier.EPSILON, stateB);
-		stateB.addTransition(TransitionIdentifier.EPSILON, stateC);
 	}
 
 	@Test
@@ -88,5 +88,21 @@ public class StateUtilTest {
 		fromSet = ImmutableSet.of(stateA);
 		toSet = StateUtil.transitiveClosure(fromSet);
 		assertEquals(ImmutableSet.of(stateA, stateB, stateC), toSet);
+	}
+
+	@Test
+	public void testGetOutgoingTransitions() {
+		fromSet = ImmutableSet.of(stateA);
+		ImmutableSet<TransitionIdentifier> expectedIds = ImmutableSet.of(
+				makeTid("FOO"), makeTid("BAR"), TransitionIdentifier.EPSILON);
+
+		assertEquals(expectedIds, StateUtil.getOutgoingTransitions(fromSet));
+	}
+
+	@Test
+	public void testGetOutgoingTransitions_Empty() {
+		fromSet = ImmutableSet.of(stateD);
+		assertEquals(ImmutableSet.of(), StateUtil
+				.getOutgoingTransitions(fromSet));
 	}
 }
