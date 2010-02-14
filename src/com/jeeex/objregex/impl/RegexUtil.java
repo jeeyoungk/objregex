@@ -42,7 +42,7 @@ public class RegexUtil {
 	 * @throws PatternSyntaxException
 	 *             If {@code pattern} is not a vaid pattern.
 	 */
-	public static EnhancedNode getRootNode(String pattern)
+	public static ASTStart getRootNode(String pattern)
 			throws PatternSyntaxException {
 		Reader reader = new StringReader(pattern);
 		RegexParser parser = new RegexParser(reader);
