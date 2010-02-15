@@ -7,10 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.ImmutableList.Builder;
 import com.jeeex.objregex.ObjectPattern;
 
 /**
@@ -25,37 +23,12 @@ import com.jeeex.objregex.ObjectPattern;
  */
 class ObjectPatternImpl<T> implements ObjectPattern<T> {
 	private final Map<String, Predicate<T>> idToPredicate = Maps.newHashMap();
-	private ImmutableSet<String> identifiers;
 	private final String regex;
 
 	/**
 	 * State graph generated from the string {@link #regex}.
 	 */
 	private State state;
-
-	/**
-	 * An object that represents the start of input in the augmented list.
-	 */
-	private static final Object AUGMENTED_START = new Object[0];
-
-	/**
-	 * An object that represents the end of input in the augmented list.
-	 */
-	private static final Object AUGMENTED_END = new Object[0];
-
-	/**
-	 * Augment the input list with {@link #AUGMENTED_START} at the beginning and
-	 * {@link #AUGMENTED_END} at the end.
-	 * 
-	 * @return The augmented list.
-	 */
-	static ImmutableList<Object> buildAugmentedInput(List<?> input) {
-		Builder<Object> builder = ImmutableList.builder();
-		builder.add(AUGMENTED_START);
-		builder.addAll(input);
-		builder.add(AUGMENTED_END);
-		return builder.build();
-	}
 
 	ObjectPatternImpl(String regex) {
 		this.regex = regex;
