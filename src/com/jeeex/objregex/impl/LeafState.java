@@ -8,7 +8,8 @@ import com.google.common.collect.Multimap;
  * {@link #getTail() tail} returns the {@code this} State. This class maintains
  * its own map of transitions.
  * 
- * @author jeekim
+ * @author Jeeyoung Kim
+ * @since 2010-02-11
  * 
  */
 public class LeafState implements State {
