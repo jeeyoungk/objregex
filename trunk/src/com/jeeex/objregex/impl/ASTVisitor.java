@@ -16,9 +16,7 @@ import com.jeeex.objregex.javacc.SimpleNode;
  * A Visitor that generates {@link State} from the Abstract Syntax Tree (AST) of
  * a regular expression. The second argument of the visit method is unused.
  * <p>
- * The entry point for this class is {@link #start(ASTStart)}. This class
- * shouldn't be used more then once to traverse multiple ASTs - that is, fresh
- * {@link ASTVisitor} should be instantiated each time an AST must be traversed.
+ * The entry point for this class is {@link #start(ASTStart)}.
  * 
  * @author Jeeyoung Kim
  * @since 2010-02-12
