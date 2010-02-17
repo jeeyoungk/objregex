@@ -91,6 +91,14 @@ public class StateUtilTest {
 	}
 
 	@Test
+	public void testTransitiveClosure_General() {
+		fromSet = ImmutableSet.of(stateB);
+		toSet = StateUtil.transitiveClosure(fromSet, ImmutableSet
+				.of(TransitionIdentifier.makeTid("TEST")));
+		assertEquals(ImmutableSet.of(stateB, stateC, stateD), toSet);
+	}
+
+	@Test
 	public void testGetOutgoingTransitions() {
 		fromSet = ImmutableSet.of(stateA);
 		ImmutableSet<TransitionIdentifier> expectedIds = ImmutableSet.of(

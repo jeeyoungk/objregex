@@ -44,7 +44,7 @@ public class DefaultRegexFactoryTest {
 
 	@Test
 	public void testConcat() {
-		ObjectPattern<String> ptrn = generatePattern("A B");
+		ObjectPattern<String> ptrn = generatePattern("^A B$");
 
 		doesNotMatch(ptrn);
 		doesNotMatch(ptrn, "A");
@@ -55,7 +55,7 @@ public class DefaultRegexFactoryTest {
 
 	@Test
 	public void testGroup() {
-		ObjectPattern<String> ptrn = generatePattern("(A)");
+		ObjectPattern<String> ptrn = generatePattern("^(A)$");
 
 		doesNotMatch(ptrn);
 		match(ptrn, "A");
@@ -64,7 +64,7 @@ public class DefaultRegexFactoryTest {
 
 	@Test
 	public void testGroupStar() {
-		ObjectPattern<String> ptrn = generatePattern("(A|B)*");
+		ObjectPattern<String> ptrn = generatePattern("^(A|B)*$");
 
 		match(ptrn);
 		match(ptrn, "A");
@@ -79,7 +79,7 @@ public class DefaultRegexFactoryTest {
 
 	@Test
 	public void testOperatorPlus() {
-		ObjectPattern<String> ptrn = generatePattern("A+");
+		ObjectPattern<String> ptrn = generatePattern("^(A+)$");
 
 		doesNotMatch(ptrn);
 		match(ptrn, "A");
@@ -93,7 +93,7 @@ public class DefaultRegexFactoryTest {
 
 	@Test
 	public void testOperatorQuestion() {
-		ObjectPattern<String> ptrn = generatePattern("A?");
+		ObjectPattern<String> ptrn = generatePattern("^(A?)$");
 
 		match(ptrn);
 		match(ptrn, "A");
@@ -104,7 +104,7 @@ public class DefaultRegexFactoryTest {
 
 	@Test
 	public void testOperatorStar() {
-		ObjectPattern<String> ptrn = generatePattern("A*");
+		ObjectPattern<String> ptrn = generatePattern("^(A*)$");
 
 		match(ptrn);
 		match(ptrn, "A");
@@ -118,7 +118,7 @@ public class DefaultRegexFactoryTest {
 
 	@Test
 	public void testOr() {
-		ObjectPattern<String> ptrn = generatePattern("A|B");
+		ObjectPattern<String> ptrn = generatePattern("^(A|B)$");
 
 		doesNotMatch(ptrn);
 		doesNotMatch(ptrn, "A", "B");
@@ -130,10 +130,18 @@ public class DefaultRegexFactoryTest {
 
 	@Test
 	public void testSimple() {
-		ObjectPattern<String> ptrn = generatePattern("A");
+		ObjectPattern<String> ptrn = generatePattern("^A$");
 
 		doesNotMatch(ptrn);
 		match(ptrn, "A");
 		doesNotMatch(ptrn, "A", "A");
+	}
+
+	@Test
+	public void testEmpty() {
+		ObjectPattern<String> ptrn = generatePattern("^$");
+
+		match(ptrn);
+		doesNotMatch(ptrn, "A");
 	}
 }
