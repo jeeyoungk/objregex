@@ -110,6 +110,17 @@ public class StateUtil {
 	 * @return
 	 */
 	public static Set<State> transitiveClosure(Set<State> states) {
+		return transitiveClosure(states, ImmutableSet.of(EPSILON));
+	}
+
+	/**
+	 * 
+	 * @param states
+	 * @param freeTransitions
+	 * @return
+	 */
+	public static Set<State> transitiveClosure(Set<State> states,
+			Set<TransitionIdentifier> freeTransitions) {
 		Set<State> closure = Sets.newHashSet(states);
 		int oldSize;
 		int newSize;
@@ -118,7 +129,9 @@ public class StateUtil {
 		// for the iteration, then we've hit the limit - terminate.
 		do {
 			oldSize = closure.size();
-			closure.addAll(traverse(closure, EPSILON));
+			for (TransitionIdentifier id : freeTransitions) {
+				closure.addAll(traverse(closure, id));
+			}
 			newSize = closure.size();
 		} while (oldSize != newSize);
 
