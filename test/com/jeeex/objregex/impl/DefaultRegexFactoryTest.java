@@ -161,7 +161,6 @@ public class DefaultRegexFactoryTest {
 
 	@Test
 	public void testNegation() {
-
 		ObjectPattern<String> ptrn = generatePattern("!A");
 
 		doesNotMatch(ptrn);
@@ -171,4 +170,14 @@ public class DefaultRegexFactoryTest {
 		doesNotMatch(ptrn, "B", "B");
 		doesNotMatch(ptrn, "A", "A");
 	}
+
+	@Test
+	public void testNull() {
+		ObjectPattern<String> ptrn = generatePattern("null");
+
+		doesNotMatch(ptrn);
+		match(ptrn, (String) null);
+		doesNotMatch(ptrn, "A");
+	}
+
 }

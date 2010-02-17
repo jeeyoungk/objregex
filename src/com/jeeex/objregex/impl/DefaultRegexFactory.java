@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.regex.PatternSyntaxException;
 
+import com.google.common.base.Predicates;
 import com.jeeex.objregex.ObjectPattern;
 import com.jeeex.objregex.RegexFactory;
 
@@ -24,7 +25,12 @@ public class DefaultRegexFactory implements RegexFactory {
 
 		patternImpl.compile();
 
+		addDefaultPredicates(patternImpl);
+
 		return patternImpl;
 	}
 
+	private <T> void addDefaultPredicates(ObjectPattern<T> pattern) {
+		pattern.set("null", Predicates.<T> isNull());
+	}
 }
