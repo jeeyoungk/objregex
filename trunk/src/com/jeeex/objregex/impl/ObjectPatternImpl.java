@@ -69,7 +69,8 @@ class ObjectPatternImpl<T> implements ObjectPattern<T> {
 				// Special TransitionIdentifiers are not mapped to any
 				// predicates.
 				continue;
-			} else if (idToPredicate.get(tid.getId()).apply(token)) {
+			} else if (idToPredicate.get(tid.getId()).apply(token) != tid
+					.isNegation()) {
 				// if the predicate evaluates to true, than traverse the
 				// sets.
 				nextStatesBuilder.addAll(StateUtil.traverse(states, tid));

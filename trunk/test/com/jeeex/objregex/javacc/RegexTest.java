@@ -132,4 +132,10 @@ public class RegexTest {
 	public void grammar_Compound() {
 		testGood("A+ B? C*", "((A B+ C)*(D? E F)+)?", "(A?|B?|C?|D?)");
 	}
+
+	@Test
+	public void grammar_not() {
+		testGood("!A", "! A", "! A B");
+		testBad("A!", "!(A)", "!(A B)");
+	}
 }

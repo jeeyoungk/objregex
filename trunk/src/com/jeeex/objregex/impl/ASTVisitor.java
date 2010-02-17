@@ -5,8 +5,10 @@ import java.util.List;
 import com.jeeex.objregex.javacc.ASTConcatExpr;
 import com.jeeex.objregex.javacc.ASTExpression;
 import com.jeeex.objregex.javacc.ASTIdentifier;
+import com.jeeex.objregex.javacc.ASTNegativeIdentifier;
 import com.jeeex.objregex.javacc.ASTOperator;
 import com.jeeex.objregex.javacc.ASTOperatorExpr;
+import com.jeeex.objregex.javacc.ASTSpecialIdentifier;
 import com.jeeex.objregex.javacc.ASTStart;
 import com.jeeex.objregex.javacc.ASTTerm;
 import com.jeeex.objregex.javacc.EnhancedNode;
@@ -33,6 +35,12 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 
 	private State firstChildAccept(EnhancedNode node) {
 		return accept(node.getFirstChild());
+	}
+
+	public State start(ASTStart start) {
+		State state = this.visit(start, null);
+
+		return state;
 	}
 
 	/**
@@ -73,6 +81,11 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 		return StateUtil.single(TransitionIdentifier.makeTid(id));
 	}
 
+	public State visit(ASTNegativeIdentifier node, Void data) {
+		String id = node.getFirstChild().jjtGetFirstToken().image;
+		return StateUtil.single(TransitionIdentifier.makeTid(id, true));
+	}
+
 	public State visit(ASTOperator node, Void v) {
 		throw new UnsupportedOperationException("Should never visit Operator.");
 	}
@@ -105,6 +118,14 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 		return state;
 	}
 
+	/**
+	 * Create a transition for a special identifier.
+	 */
+	public State visit(ASTSpecialIdentifier node, Void data) {
+		String id = node.jjtGetFirstToken().image;
+		return StateUtil.single(TransitionIdentifier.makeSpecialTid(id));
+	}
+
 	public State visit(ASTStart node, Void v) {
 		return firstChildAccept(node);
 	}
@@ -120,11 +141,5 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 	public State visit(SimpleNode node, Void v) {
 		throw new UnsupportedOperationException(
 				"Generic SimpleNode should not be visited.");
-	}
-
-	public State start(ASTStart start) {
-		State state = this.visit(start, null);
-
-		return state;
 	}
 }
