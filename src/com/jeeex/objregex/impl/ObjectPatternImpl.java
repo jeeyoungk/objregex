@@ -65,8 +65,9 @@ class ObjectPatternImpl<T> implements ObjectPattern<T> {
 				.builder();
 
 		for (TransitionIdentifier tid : outgoingTransitions) {
-			if (tid.equals(TransitionIdentifier.EPSILON)) {
-				// EPSILON is not mapped with any predicate.
+			if (tid.isSpecial()) {
+				// Special TransitionIdentifiers are not mapped to any
+				// predicates.
 				continue;
 			} else if (idToPredicate.get(tid.getId()).apply(token)) {
 				// if the predicate evaluates to true, than traverse the
@@ -86,7 +87,8 @@ class ObjectPatternImpl<T> implements ObjectPattern<T> {
 		// temporary, current set of states reached by the regex engine.
 		// starts from the transitive closure of state.getTail().
 		Set<State> currentStates = StateUtil.transitiveClosure(ImmutableSet
-				.of(state.getTail()));
+				.of(state.getTail()), ImmutableSet.of(
+				TransitionIdentifier.EPSILON, TransitionIdentifier.BOF));
 
 		for (T curToken : input) {
 			// consume the token, and take the transitive closure.
@@ -98,7 +100,8 @@ class ObjectPatternImpl<T> implements ObjectPattern<T> {
 			}
 		}
 
-		// 
+		currentStates = StateUtil.transitiveClosure(currentStates, ImmutableSet
+				.of(TransitionIdentifier.EPSILON, TransitionIdentifier.EOF));
 		return currentStates.contains(state.getHead());
 	}
 

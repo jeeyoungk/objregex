@@ -9,10 +9,9 @@ import com.google.common.base.Objects;
  * <p>
  * {@link TransitionIdentifier} is either {@link #isSpecial() special} or not .
  * Special TransitionIdentifiers are predefined, and they're available as the
- * static constants in this class. Currently, {@link #EPSILON} is the only
- * special identifier. Users should use the method {@link #makeTid(String)} to
- * create {@link TransitionIdentifier}. {@link #makeTid(String)} method returns
- * nonspecial identifier.
+ * static constants in this class. Currently, {@link #EPSILON}, {@link #EOF},
+ * and {@link #BOF} are the only special identifiers. Users should use the
+ * method {@link #makeTid(String)} to create {@link TransitionIdentifier}.
  * <p>
  * {@link TransitionIdentifier} is immutable.
  * 
@@ -27,13 +26,32 @@ public class TransitionIdentifier {
 			true, "EPSILON");
 
 	/**
-	 * Initializes a non-special special id, with given string identifier.
+	 * Represents a transition that can only be consumed by end-of-file.
+	 */
+	public static final TransitionIdentifier EOF = new TransitionIdentifier(
+			true, "$");
+	/**
+	 * Represents a transition that can only be consumed by beginning-of-file.
+	 */
+	public static final TransitionIdentifier BOF = new TransitionIdentifier(
+			true, "^");
+
+	/**
+	 * Initializes a {@link TransitionIdentifier}. If {@code} id is "$" or "^",
+	 * then the special {@link TransitionIdentifier} {@link #BOF} or
+	 * {@link #EOF} is returned. Otherwise, a nonspecial
+	 * {@link TransitionIdentifier} for the given {@code id} is returned.
 	 * 
 	 * @throws NullPointerException
 	 *             If id is null.
 	 */
 	public static TransitionIdentifier makeTid(String id)
 			throws NullPointerException {
+		if (id.equals("$")) {
+			return EOF;
+		} else if (id.equals("^")) {
+			return BOF;
+		}
 		return new TransitionIdentifier(false, id);
 	}
 
@@ -67,6 +85,11 @@ public class TransitionIdentifier {
 
 	public boolean isSpecial() {
 		return special;
+	}
+
+	@Override
+	public String toString() {
+		return id;
 	}
 
 }

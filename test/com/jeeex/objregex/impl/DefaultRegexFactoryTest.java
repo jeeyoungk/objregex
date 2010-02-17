@@ -4,11 +4,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.jeeex.objregex.ObjectPattern;
 import com.jeeex.objregex.RegexFactory;
@@ -139,9 +141,21 @@ public class DefaultRegexFactoryTest {
 
 	@Test
 	public void testEmpty() {
-		ObjectPattern<String> ptrn = generatePattern("^$");
+		// All different types of empty strings.
+		List<String> ptrnStrings = ImmutableList.of("", "^", "$", "^$", "^^$$");
 
-		match(ptrn);
-		doesNotMatch(ptrn, "A");
+		ImmutableList.Builder<ObjectPattern<String>> builder = ImmutableList
+				.builder();
+		for (String ptrnString : ptrnStrings) {
+			builder.add(generatePattern(ptrnString));
+		}
+
+		List<ObjectPattern<String>> emptyPatterns = builder.build();
+
+		// test all the patterns.
+		for (ObjectPattern<String> ptrn : emptyPatterns) {
+			match(ptrn);
+			doesNotMatch(ptrn, "A");
+		}
 	}
 }
