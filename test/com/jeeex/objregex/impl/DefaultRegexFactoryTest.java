@@ -180,4 +180,14 @@ public class DefaultRegexFactoryTest {
 		doesNotMatch(ptrn, "A");
 	}
 
+	@Test
+	public void testDot() {
+		ObjectPattern<String> ptrn = generatePattern(".");
+
+		doesNotMatch(ptrn);
+		match(ptrn, "Foo");
+		match(ptrn, (String) null);
+		doesNotMatch(ptrn, "Foo", "bar");
+
+	}
 }
