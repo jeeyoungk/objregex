@@ -30,7 +30,11 @@ public class DefaultRegexFactory implements RegexFactory {
 		return patternImpl;
 	}
 
+	/**
+	 * Assigns some default predicates to the generated pattern.
+	 */
 	private <T> void addDefaultPredicates(ObjectPattern<T> pattern) {
 		pattern.set("null", Predicates.<T> isNull());
+		pattern.set(".", Predicates.<T> alwaysTrue());
 	}
 }
