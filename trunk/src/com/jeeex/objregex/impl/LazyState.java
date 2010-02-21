@@ -25,7 +25,7 @@ public abstract class LazyState implements State {
 	}
 
 	public void addTransition(TransitionIdentifier id, State other) {
-		transitions.put(id, other);
+		transitions.put(id, other.getTail());
 	}
 
 	public LazyState getHead() {
