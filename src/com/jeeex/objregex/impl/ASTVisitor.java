@@ -16,7 +16,9 @@ import com.jeeex.objregex.javacc.SimpleNode;
 
 /**
  * A Visitor that generates {@link State} from the Abstract Syntax Tree (AST) of
- * a regular expression. The second argument of the visit method is unused.
+ * a regular expression. The second argument of the visitor is
+ * {@link SingleLazyStateManager}, which is used to create single lazy
+ * transitions.
  * <p>
  * The entry point for this class is {@link #start(ASTStart)}.
  * 
@@ -27,18 +29,19 @@ import com.jeeex.objregex.javacc.SimpleNode;
 class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 
 	/**
-	 * Shortcut for jjtAccept, with null passed as data.
+	 * Calls jjtAccept.
 	 */
-	private State accept(EnhancedNode node) {
-		return node.jjtAccept(this, null);
+	private State accept(EnhancedNode node, SingleLazyStateManager manager) {
+		return node.jjtAccept(this, manager);
 	}
 
-	private State firstChildAccept(EnhancedNode node) {
-		return accept(node.getFirstChild());
+	private State firstChildAccept(EnhancedNode node,
+			SingleLazyStateManager manager) {
+		return accept(node.getFirstChild(), manager);
 	}
 
-	public State start(ASTStart start) {
-		State state = this.visit(start, null);
+	public State start(ASTStart start, SingleLazyStateManager manager) {
+		State state = this.visit(start, manager);
 
 		return state;
 	}
@@ -46,25 +49,25 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 	/**
 	 * {@link ASTConcatExpr} may be empty.
 	 */
-	public State visit(ASTConcatExpr node, Void v) {
+	public State visit(ASTConcatExpr node, SingleLazyStateManager manager) {
 		if (node.getNodeList().isEmpty()) {
 			return StateUtil.emptyState();
 		}
-		State state = firstChildAccept(node);
+		State state = firstChildAccept(node, manager);
 
 		for (EnhancedNode n : node.getNodeList(1)) {
-			State concatState = accept(n);
+			State concatState = accept(n, manager);
 			state = StateUtil.concat(state, concatState);
 		}
 		return state;
 	}
 
-	public State visit(ASTExpression node, Void v) {
+	public State visit(ASTExpression node, SingleLazyStateManager manager) {
 
-		State state = firstChildAccept(node);
+		State state = firstChildAccept(node, manager);
 
 		for (EnhancedNode n : node.getNodeList(1)) {
-			State alternateState = accept(n);
+			State alternateState = accept(n, manager);
 			state = StateUtil.or(state, alternateState);
 		}
 
@@ -76,22 +79,23 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 	 * <p>
 	 * Identifier names are collected in the set {@link #ids}.
 	 */
-	public State visit(ASTIdentifier node, Void v) {
+	public State visit(ASTIdentifier node, SingleLazyStateManager manager) {
 		String id = node.jjtGetFirstToken().image;
-		return StateUtil.single(TransitionIdentifier.makeTid(id));
+		return manager.lazySingle(TransitionIdentifier.makeTid(id));
 	}
 
-	public State visit(ASTNegativeIdentifier node, Void data) {
+	public State visit(ASTNegativeIdentifier node,
+			SingleLazyStateManager manager) {
 		String id = node.getFirstChild().jjtGetFirstToken().image;
-		return StateUtil.single(TransitionIdentifier.makeTid(id, true));
+		return manager.lazySingle(TransitionIdentifier.makeTid(id, true));
 	}
 
-	public State visit(ASTOperator node, Void v) {
+	public State visit(ASTOperator node, SingleLazyStateManager manager) {
 		throw new UnsupportedOperationException("Should never visit Operator.");
 	}
 
-	public State visit(ASTOperatorExpr node, Void v) {
-		State state = firstChildAccept(node);
+	public State visit(ASTOperatorExpr node, SingleLazyStateManager manager) {
+		State state = firstChildAccept(node, manager);
 
 		List<RegexOperator> operators = RegexUtil.extractOperators(node);
 		for (RegexOperator operator : operators) {
@@ -102,7 +106,7 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 
 			case PLUS:
 				// A+ is defined as A A*.
-				State head = firstChildAccept(node);
+				State head = firstChildAccept(node, manager);
 				State kleineClosure = StateUtil.kleineClosure(state);
 				state = StateUtil.concat(head, kleineClosure);
 				break;
@@ -121,24 +125,24 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 	/**
 	 * Create a transition for a special identifier.
 	 */
-	public State visit(ASTSpecialIdentifier node, Void data) {
+	public State visit(ASTSpecialIdentifier node, SingleLazyStateManager manager) {
 		String id = node.jjtGetFirstToken().image;
 		return StateUtil.single(TransitionIdentifier.makeSpecialTid(id));
 	}
 
-	public State visit(ASTStart node, Void v) {
-		return firstChildAccept(node);
+	public State visit(ASTStart node, SingleLazyStateManager manager) {
+		return firstChildAccept(node, manager);
 	}
 
 	/**
 	 * A term is either Identifier, or Expression. either case, the state
 	 * delegation logic is delegated to the first child.
 	 */
-	public State visit(ASTTerm node, Void v) {
-		return firstChildAccept(node);
+	public State visit(ASTTerm node, SingleLazyStateManager manager) {
+		return firstChildAccept(node, manager);
 	}
 
-	public State visit(SimpleNode node, Void v) {
+	public State visit(SimpleNode node, SingleLazyStateManager manager) {
 		throw new UnsupportedOperationException(
 				"Generic SimpleNode should not be visited.");
 	}
