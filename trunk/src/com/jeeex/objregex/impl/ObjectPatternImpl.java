@@ -1,6 +1,8 @@
 package com.jeeex.objregex.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.jeeex.objregex.impl.TransitionIdentifier.BOF;
+import static com.jeeex.objregex.impl.TransitionIdentifier.EOF;
 import static com.jeeex.objregex.impl.TransitionIdentifier.EPSILON;
 import static java.text.MessageFormat.format;
 
@@ -24,7 +26,7 @@ import com.jeeex.objregex.ObjectPattern;
  * 
  */
 class ObjectPatternImpl<T> implements ObjectPattern<T> {
-	private static enum IdentifierCategory {
+	static enum IdentifierCategory {
 		/**
 		 * This identifier is a key in {@link ObjectPatternImpl#idToPredicate}
 		 */
@@ -147,8 +149,7 @@ class ObjectPatternImpl<T> implements ObjectPattern<T> {
 		// temporary, current set of states reached by the regex engine.
 		// starts from the transitive closure of state.getTail().
 		Set<State> currentStates = StateUtil.transitiveClosure(ImmutableSet
-				.of(state.getTail()), ImmutableSet.of(
-				TransitionIdentifier.EPSILON, TransitionIdentifier.BOF));
+				.of(state.getTail()), ImmutableSet.of(EPSILON, BOF));
 
 		for (T curToken : input) {
 			// consume the token, and take the transitive closure.
@@ -161,7 +162,7 @@ class ObjectPatternImpl<T> implements ObjectPattern<T> {
 		}
 
 		currentStates = StateUtil.transitiveClosure(currentStates, ImmutableSet
-				.of(TransitionIdentifier.EPSILON, TransitionIdentifier.EOF));
+				.of(EPSILON, EOF));
 		return currentStates.contains(state.getHead());
 	}
 
