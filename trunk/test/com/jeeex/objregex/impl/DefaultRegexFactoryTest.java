@@ -184,10 +184,36 @@ public class DefaultRegexFactoryTest {
 	public void testDot() {
 		ObjectPattern<String> ptrn = generatePattern(".");
 
-		doesNotMatch(ptrn);
 		match(ptrn, "Foo");
+		doesNotMatch(ptrn);
 		match(ptrn, (String) null);
 		doesNotMatch(ptrn, "Foo", "bar");
+	}
 
+	@Test
+	public void testSetPattern() {
+		ObjectPattern<String> ptrn = generatePattern("Foo");
+		ptrn.set("Foo", "A");
+
+		doesNotMatch(ptrn);
+		match(ptrn, "A");
+		doesNotMatch(ptrn, "A", "A");
+	}
+
+	@Test
+	public void testRecursivePattern() {
+		ObjectPattern<String> ptrn = generatePattern("LPAREN (this)? RPAREN");
+
+		ptrn.set("LPAREN", Predicates.equalTo("("));
+		ptrn.set("RPAREN", Predicates.equalTo(")"));
+
+		doesNotMatch(ptrn);
+
+		match(ptrn, "(", ")");
+		match(ptrn, "(", "(", ")", ")");
+		match(ptrn, "(", "(", "(", ")", ")", ")");
+		match(ptrn, "(", "(", "(", "(", ")", ")", ")", ")");
+		doesNotMatch(ptrn, "(", "(", ")");
+		doesNotMatch(ptrn, "(", ")", ")");
 	}
 }

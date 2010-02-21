@@ -36,5 +36,7 @@ public class DefaultRegexFactory implements RegexFactory {
 	private <T> void addDefaultPredicates(ObjectPattern<T> pattern) {
 		pattern.set("null", Predicates.<T> isNull());
 		pattern.set(".", Predicates.<T> alwaysTrue());
+		// support for recursion.
+		pattern.set("this", pattern.getRegex());
 	}
 }

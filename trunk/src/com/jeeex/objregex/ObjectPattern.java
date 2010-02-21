@@ -43,7 +43,7 @@ public interface ObjectPattern<T> extends Predicate<List<? extends T>> {
 	 * @throws NullPointerException
 	 *             If any of the arguments are null.
 	 */
-	public void set(String identifier, ObjectPattern<T> pattern)
+	public void set(String identifier, String pattern)
 			throws NullPointerException;
 
 	/**
