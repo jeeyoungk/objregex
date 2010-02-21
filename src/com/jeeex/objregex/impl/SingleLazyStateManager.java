@@ -4,7 +4,7 @@ package com.jeeex.objregex.impl;
  * This class serves two purposes
  * <ol>
  * <li>Factory for lazy single identifier transition states, via
- * {@link #lazySingle(TransitionIdentifier)}.
+ * {@link #singleTransition(TransitionIdentifier)}.
  * <li>Lazily initialize the produced states via
  * {@link #initializeLazySingle(LazyState, TransitionIdentifier, LeafState)}.
  * </ol>
@@ -13,7 +13,7 @@ package com.jeeex.objregex.impl;
  * @since 2010-02-20
  * 
  */
-public abstract class SingleLazyStateManager {
+public abstract class SingleLazyStateManager implements SingleTransitionFactory {
 
 	/**
 	 * {@link LazyState} that represents a single transition.
@@ -66,7 +66,7 @@ public abstract class SingleLazyStateManager {
 	 * Similar to {@link StateUtil#single(TransitionIdentifier)}, but creates
 	 * lazily initialized transition.
 	 */
-	public State lazySingle(TransitionIdentifier id) {
+	public State singleTransition(TransitionIdentifier id) {
 		LeafState head = new LeafState();
 		State tail = new SingleLazyState(id, head);
 		return new CompositeState(head, tail);

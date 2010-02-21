@@ -1,5 +1,7 @@
 package com.jeeex.objregex.impl;
 
+import static com.jeeex.objregex.impl.TransitionIdentifier.makeTid;
+
 import java.util.List;
 
 import com.jeeex.objregex.javacc.ASTConcatExpr;
@@ -17,7 +19,7 @@ import com.jeeex.objregex.javacc.SimpleNode;
 /**
  * A Visitor that generates {@link State} from the Abstract Syntax Tree (AST) of
  * a regular expression. The second argument of the visitor is
- * {@link SingleLazyStateManager}, which is used to create single lazy
+ * {@link SingleTransitionFactory}, which is used to create single lazy
  * transitions.
  * <p>
  * The entry point for this class is {@link #start(ASTStart)}.
@@ -31,16 +33,16 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 	/**
 	 * Calls jjtAccept.
 	 */
-	private State accept(EnhancedNode node, SingleLazyStateManager manager) {
+	private State accept(EnhancedNode node, SingleTransitionFactory manager) {
 		return node.jjtAccept(this, manager);
 	}
 
 	private State firstChildAccept(EnhancedNode node,
-			SingleLazyStateManager manager) {
+			SingleTransitionFactory manager) {
 		return accept(node.getFirstChild(), manager);
 	}
 
-	public State start(ASTStart start, SingleLazyStateManager manager) {
+	public State start(ASTStart start, SingleTransitionFactory manager) {
 		State state = this.visit(start, manager);
 
 		return state;
@@ -49,7 +51,7 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 	/**
 	 * {@link ASTConcatExpr} may be empty.
 	 */
-	public State visit(ASTConcatExpr node, SingleLazyStateManager manager) {
+	public State visit(ASTConcatExpr node, SingleTransitionFactory manager) {
 		if (node.getNodeList().isEmpty()) {
 			return StateUtil.emptyState();
 		}
@@ -62,7 +64,7 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 		return state;
 	}
 
-	public State visit(ASTExpression node, SingleLazyStateManager manager) {
+	public State visit(ASTExpression node, SingleTransitionFactory manager) {
 
 		State state = firstChildAccept(node, manager);
 
@@ -79,22 +81,22 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 	 * <p>
 	 * Identifier names are collected in the set {@link #ids}.
 	 */
-	public State visit(ASTIdentifier node, SingleLazyStateManager manager) {
+	public State visit(ASTIdentifier node, SingleTransitionFactory manager) {
 		String id = node.jjtGetFirstToken().image;
-		return manager.lazySingle(TransitionIdentifier.makeTid(id));
+		return manager.singleTransition(makeTid(id));
 	}
 
 	public State visit(ASTNegativeIdentifier node,
-			SingleLazyStateManager manager) {
+			SingleTransitionFactory manager) {
 		String id = node.getFirstChild().jjtGetFirstToken().image;
-		return manager.lazySingle(TransitionIdentifier.makeTid(id, true));
+		return manager.singleTransition(makeTid(id, true));
 	}
 
-	public State visit(ASTOperator node, SingleLazyStateManager manager) {
+	public State visit(ASTOperator node, SingleTransitionFactory manager) {
 		throw new UnsupportedOperationException("Should never visit Operator.");
 	}
 
-	public State visit(ASTOperatorExpr node, SingleLazyStateManager manager) {
+	public State visit(ASTOperatorExpr node, SingleTransitionFactory manager) {
 		State state = firstChildAccept(node, manager);
 
 		List<RegexOperator> operators = RegexUtil.extractOperators(node);
@@ -125,12 +127,13 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 	/**
 	 * Create a transition for a special identifier.
 	 */
-	public State visit(ASTSpecialIdentifier node, SingleLazyStateManager manager) {
+	public State visit(ASTSpecialIdentifier node,
+			SingleTransitionFactory manager) {
 		String id = node.jjtGetFirstToken().image;
 		return StateUtil.single(TransitionIdentifier.makeSpecialTid(id));
 	}
 
-	public State visit(ASTStart node, SingleLazyStateManager manager) {
+	public State visit(ASTStart node, SingleTransitionFactory manager) {
 		return firstChildAccept(node, manager);
 	}
 
@@ -138,11 +141,11 @@ class ASTVisitor implements com.jeeex.objregex.javacc.RegexParserVisitor {
 	 * A term is either Identifier, or Expression. either case, the state
 	 * delegation logic is delegated to the first child.
 	 */
-	public State visit(ASTTerm node, SingleLazyStateManager manager) {
+	public State visit(ASTTerm node, SingleTransitionFactory manager) {
 		return firstChildAccept(node, manager);
 	}
 
-	public State visit(SimpleNode node, SingleLazyStateManager manager) {
+	public State visit(SimpleNode node, SingleTransitionFactory manager) {
 		throw new UnsupportedOperationException(
 				"Generic SimpleNode should not be visited.");
 	}
