@@ -29,6 +29,7 @@ public class DefaultRegexFactoryTest {
 		compiledPattern.set("A", Predicates.equalTo("A"));
 		compiledPattern.set("B", Predicates.equalTo("B"));
 		compiledPattern.set("C", Predicates.equalTo("C"));
+		compiledPattern.set("D", Predicates.equalTo("D"));
 		compiledPattern.set("ABC", Predicates
 				.in(ImmutableSet.of("A", "B", "C")));
 
@@ -215,5 +216,13 @@ public class DefaultRegexFactoryTest {
 		match(ptrn, "(", "(", "(", "(", ")", ")", ")", ")");
 		doesNotMatch(ptrn, "(", "(", ")");
 		doesNotMatch(ptrn, "(", ")", ")");
+	}
+
+	@Test
+	public void testConcatOr() {
+		ObjectPattern<String> ptrn = generatePattern("(A B)|(C D)");
+
+		match(ptrn, "A", "B");
+		match(ptrn, "C", "D");
 	}
 }
