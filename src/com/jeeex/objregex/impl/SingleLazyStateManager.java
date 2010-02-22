@@ -19,10 +19,12 @@ public abstract class SingleLazyStateManager implements SingleTransitionFactory 
 	 * {@link LazyState} that represents a single transition.
 	 */
 	class SingleLazyState extends LazyState {
+
 		/**
 		 * Projected end of the transition.
 		 */
 		private final LeafState lazyHead;
+
 		/**
 		 * {@link TransitionIdentifier} which identifies this single transition.
 		 */

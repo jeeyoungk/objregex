@@ -69,12 +69,10 @@ public class StateUtil {
 	 *            NFA state for regex B.
 	 */
 	public static State or(State first, State second) {
-		State tail = new LeafState();
-		State head = new LeafState();
+		State tail = first.getTail();
+		State head = first.getHead();
 
-		tail.addTransition(EPSILON, first);
 		tail.addTransition(EPSILON, second);
-		first.addTransition(EPSILON, head);
 		second.addTransition(EPSILON, head);
 
 		return new CompositeState(head, tail);
