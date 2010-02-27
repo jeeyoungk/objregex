@@ -25,10 +25,8 @@ public class CompositeState implements State {
 	 *             If any of the arguments are null.
 	 */
 	public CompositeState(State head, State tail) throws NullPointerException {
-		checkNotNull(head);
-		checkNotNull(tail);
-		this.head = head;
-		this.tail = tail;
+		this.head = checkNotNull(head);
+		this.tail = checkNotNull(tail);
 	}
 
 	public void addTransition(TransitionIdentifier id, State other) {
