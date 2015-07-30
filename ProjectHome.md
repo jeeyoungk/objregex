@@ -1,0 +1,1 @@
+This project attempts to generalize the notion from set of all characters to set of objects.
